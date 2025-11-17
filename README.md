@@ -33,7 +33,7 @@ pnpm --filter ./apps/api run dev
 pnpm -F api run dev
 ```
 
--   Un microservicio (ej. mcp-pedidos):
+-   Un MCP:
 
 ```bash
 pnpm --filter mcp-pedidos run dev
