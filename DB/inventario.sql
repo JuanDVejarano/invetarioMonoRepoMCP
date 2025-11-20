@@ -309,7 +309,8 @@ BEGIN
         ((SELECT id FROM materia_prima WHERE nombre = 'Mangos ergonómicos de plástico o metal' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Bisturí quirúrgico' LIMIT 1), 1),
         ((SELECT id FROM materia_prima WHERE nombre = 'Mecanismos de bloqueo de acero inoxidable' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Pinza hemostática' LIMIT 1), 1),
         ((SELECT id FROM materia_prima WHERE nombre = 'Hilos de poliglactina' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Sutura quirúrgica' LIMIT 1), 1),
-        ((SELECT id FROM materia_prima WHERE nombre = 'Agujas de acero inoxidable' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Sutura quirúrgica' LIMIT 1), 1);
+        ((SELECT id FROM materia_prima WHERE nombre = 'Agujas de acero inoxidable' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Sutura quirúrgica' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Acero inoxidable' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Tijeras quirúrgicas' LIMIT 1), 1);
 
     -- Proveedor de prueba
     INSERT INTO proveedor (nit, nombre, direccion, telefono, correo) VALUES
@@ -373,3 +374,8 @@ SELECT p.id AS idProducto, p.nombre AS nombreProducto, m.id AS idMateriaPrima, m
 SELECT * FROM producto;
 SELECT * FROM materia_prima;
 SELECT * FROM materia_prima_producto;
+SELECT u.idUsuario, u.usuario, e.nombre, r.nombreRol FROM usuario AS u INNER JOIN empleado AS e ON u.fkEmpleado = e.cedula INNER JOIN rol AS r ON u.fkRol = r.idRol;
+
+
+-- ver ordenes de compra con estado y usuario
+SELECT oc.id, eo.nombre AS estado, u.usuario, oc.costoTotal FROM orden_compra oc INNER JOIN estado_orden eo ON oc.fkEstado = eo.id INNER JOIN usuario u ON oc.fkUsuario = u.idUsuario;

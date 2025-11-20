@@ -423,7 +423,6 @@ server.tool(
     "crear_orden_compra",
     "Crea una orden de compra para materiales específicos con validación de presupuesto",
     {
-        usuarioId: z.number().describe("ID del usuario que crea la orden"),
         materiales: z
             .array(
                 z.object({
@@ -433,7 +432,9 @@ server.tool(
             )
             .describe("Array de materiales con sus cantidades"),
     },
-    async ({ usuarioId, materiales }) => {
+    async ({ materiales }) => {
+        // Siempre usar usuario ID 1
+        const usuarioId = 1;
         const client = await pool.connect();
 
         try {
@@ -521,7 +522,9 @@ server.tool(
                                 success: true,
                                 ordenId,
                                 costoTotal,
-                                mensaje: "Orden de compra creada exitosamente",
+                                usuarioId,
+                                mensaje:
+                                    "Orden de compra creada exitosamente por usuario ID 1",
                             },
                             null,
                             2
