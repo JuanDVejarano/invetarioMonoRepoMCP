@@ -204,10 +204,16 @@ BEGIN
 
     -- Empleado de prueba
     INSERT INTO empleado (cedula, nombre, correo, direccion, ciudad, telefono, fecha_contratacion) VALUES
-        (123456789, 'admin', 'admin@admin.com', 'Calle Falsa 123', 'Ciudad', '1234567890', CURRENT_DATE);
+        (101010, 'IAInventarios', 'MCPInventario@admin.com', 'MCP server', 'MCP server', '101010', CURRENT_DATE),
+        (123456789, 'Admin', 'admin@admin.com', 'Calle Falsa 123', 'Ciudad', '1234567890', CURRENT_DATE);
 
     -- Usuario de prueba (referencia el rol 'Admin' para obtener su id)
     INSERT INTO usuario (usuario, clave, fkRol, fkEmpleado) VALUES (
+        'MCPInventarios',
+        'asdfq*_&12AsD',
+        (SELECT idRol FROM rol WHERE nombreRol = 'Agente IA' LIMIT 1),
+        101010),
+        (
         'admin',
         'admin',
         (SELECT idRol FROM rol WHERE nombreRol = 'Admin' LIMIT 1),

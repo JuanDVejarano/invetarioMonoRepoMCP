@@ -36,6 +36,63 @@ const server = new McpServer({
     version: "1.0.0",
 });
 
+// Tool: Listar todos los productos
+server.tool(
+    "listar_productos",
+    "Lista todos los productos disponibles con su información básica",
+    {},
+    async () => {
+        try {
+            const productosResult = await query(
+                `SELECT 
+                    p.id,
+                    p.nombre,
+                    tp.nombre as tipo,
+                    p.caracteristicas,
+                    p.precio,
+                    p.stock
+                FROM producto p
+                JOIN tipo_producto tp ON p.fkTipo = tp.id
+                ORDER BY p.id`
+            );
+
+            const productos = productosResult.rows.map((p: any) => ({
+                id: p.id,
+                nombre: p.nombre,
+                tipo: p.tipo,
+                caracteristicas: p.caracteristicas,
+                precio: parseFloat(p.precio),
+                stockDisponible: p.stock,
+            }));
+
+            return {
+                content: [
+                    {
+                        type: "text",
+                        text: JSON.stringify(
+                            {
+                                totalProductos: productos.length,
+                                productos,
+                            },
+                            null,
+                            2
+                        ),
+                    },
+                ],
+            };
+        } catch (error: any) {
+            return {
+                content: [
+                    {
+                        type: "text",
+                        text: `Error: ${error.message}`,
+                    },
+                ],
+            };
+        }
+    }
+);
+
 // Tool: Verificar disponibilidad de materiales para producir
 server.tool(
     "verificar_materiales_producto",
