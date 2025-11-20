@@ -158,6 +158,33 @@ CREATE TABLE historial_caja (
     FOREIGN KEY (fkVenta) REFERENCES venta(id)
 );
 
+-- trigger de insercion orden de compra
+CREATE OR REPLACE FUNCTION trg_insert_historial_caja_on_orden_compra()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    -- Insertar movimiento en historial de caja
+    INSERT INTO historial_caja (fkTipoMovimiento, fkCaja, fecha, fkOrdenCompra, fkVenta)
+    VALUES (1, 1, CURRENT_DATE, NEW.id, NULL);
+
+    -- Restar el costo de la orden del capital de la caja (idCaja = 1)
+    IF NEW.costoTotal IS NOT NULL THEN
+        UPDATE caja
+        SET capital = capital - NEW.costoTotal
+        WHERE idCaja = 1;
+    END IF;
+
+    RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_after_insert_orden_compra
+AFTER INSERT ON orden_compra
+FOR EACH ROW
+EXECUTE FUNCTION trg_insert_historial_caja_on_orden_compra();
+
+
 
 CREATE OR REPLACE FUNCTION reset_Database()
 RETURNS VOID
@@ -379,3 +406,7 @@ SELECT u.idUsuario, u.usuario, e.nombre, r.nombreRol FROM usuario AS u INNER JOI
 
 -- ver ordenes de compra con estado y usuario
 SELECT oc.id, eo.nombre AS estado, u.usuario, oc.costoTotal FROM orden_compra oc INNER JOIN estado_orden eo ON oc.fkEstado = eo.id INNER JOIN usuario u ON oc.fkUsuario = u.idUsuario;
+
+-- ver caja y movimientos
+SELECT * FROM caja;
+SELECT hc.fecha, tmc.nombre AS movimiento, tmc.descripcion, oc.costoTotal AS deduccion FROM historial_caja AS hc INNER JOIN tipo_movimiento_caja AS tmc ON hc.fkTipoMovimiento = tmc.id INNER JOIN caja AS c ON hc.fkCaja = c.idCaja INNER JOIN orden_compra AS oc ON hc.fkOrdenCompra = oc.id WHERE c.idCaja = 1;
