@@ -207,13 +207,11 @@ BEGIN
         (123456789, 'admin', 'admin@admin.com', 'Calle Falsa 123', 'Ciudad', '1234567890', CURRENT_DATE);
 
     -- Usuario de prueba (referencia el rol 'Admin' para obtener su id)
-    INSERT INTO usuario (usuario, clave, fkRol, fkEmpleado)
-    VALUES (
+    INSERT INTO usuario (usuario, clave, fkRol, fkEmpleado) VALUES (
         'admin',
         'admin',
         (SELECT idRol FROM rol WHERE nombreRol = 'Admin' LIMIT 1),
-        123456789
-    );
+        123456789);
 
     -- Cliente de prueba
     INSERT INTO cliente (cedulaNit, nombre, correo, direccion, ciudad, telefono) VALUES
@@ -289,6 +287,24 @@ BEGIN
         ('Hilos de poliglactina', 'Hilos de sutura absorbibles fabricados con poliglactina para garantizar una cicatrización adecuada de las heridas.', 400),
         ('Agujas de acero inoxidable', 'Agujas quirúrgicas fabricadas con acero inoxidable de alta calidad para garantizar resistencia y durabilidad.', 350);
     
+    -- Materia prima y productos asociados
+    INSERT INTO materia_prima_producto (fkMateriaPrima, fkProducto, cantidad) VALUES
+        ((SELECT id FROM materia_prima WHERE nombre = 'Acero inoxidable' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Bisturí quirúrgico' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Polímero ABS' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Bisturí quirúrgico' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Aleaciones de titanio' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Bisturí quirúrgico' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Hilo: Poliglactina (Vicryl)' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Sutura quirúrgica' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Aguja: Acero inoxidable' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Sutura quirúrgica' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Fibra óptica (en modelos con luz)' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Laringoscopio' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'LED o halógeno (en modelos con luz)' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Laringoscopio' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Conductores de cobre' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Laringoscopio' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Lentes de vidrio o policarbonato' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Espejo quirúrgico' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Mango de acero inoxidable o plástico' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Espejo quirúrgico' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Hojas desechables de acero inoxidable' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Bisturí quirúrgico' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Mangos ergonómicos de plástico o metal' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Bisturí quirúrgico' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Mecanismos de bloqueo de acero inoxidable' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Pinza hemostática' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Hilos de poliglactina' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Sutura quirúrgica' LIMIT 1), 1),
+        ((SELECT id FROM materia_prima WHERE nombre = 'Agujas de acero inoxidable' LIMIT 1), (SELECT id FROM producto WHERE nombre = 'Sutura quirúrgica' LIMIT 1), 1);
+
     -- Proveedor de prueba
     INSERT INTO proveedor (nit, nombre, direccion, telefono, correo) VALUES
         (1122334455, 'Proveedor Medico S.A.S', 'Avenida Principal 789', '3216549870', 'correoPrueba1@ggg.com'),
@@ -296,7 +312,6 @@ BEGIN
         (3344556677, 'Insumos Médicos Integrales', 'Carrera Tercera 123', '9873216540', 'correoPrueba3@ggg.com'),
         (4455667788, 'Distribuciones Hospitalarias S.A.', 'Avenida Cuarta 321', '1237894560', 'correoPrueba4@ggg.com'),
         (5566778899, 'Equipos Médicos Avanzados Ltda', 'Calle Quinta 654', '4561237890', 'correoPrueba5@ggg.com');
-    
     
     -- Proveedor-Materia Prima de prueba (referencia materia_prima por nombre)
     INSERT INTO proveedor_materia_prima (fkProveedor, fkMateriaPrima, costoUnidad) VALUES
@@ -346,3 +361,9 @@ SELECT reset_Database();
 
 -- borrar funcion
 DROP FUNCTION reset_Database();
+
+SELECT p.id AS idProducto, p.nombre AS nombreProducto, m.id AS idMateriaPrima, m.nombre AS nombreMateriaPrima FROM producto AS p INNER JOIN materia_prima_producto AS mp ON p.id = mp.fkProducto INNER JOIN materia_prima AS m ON mp.fkMateriaPrima = m.id;
+
+SELECT * FROM producto;
+SELECT * FROM materia_prima;
+SELECT * FROM materia_prima_producto;
